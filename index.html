@@ -100,7 +100,7 @@
   }
   .sl-main-content {
     flex: 1;
-    overflow: hidden;
+    overflow: visible;
     font-size: 20px;
   }
   .sl-logo-section {
@@ -187,15 +187,16 @@
     font-size: 20px;
   }
   .sl-remarks-section {
-    margin-top: 40px;
+    margin-top: 30px;
   }
   .sl-remarks-title {
     font-size: 20px;
     font-weight: bold;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
   .sl-remarks-text {
     font-size: 18px;
+    word-break: break-word;
   }
   .sl-footer-section {
     display: flex;
@@ -485,6 +486,8 @@ function Dashboard({ settings, orders, tasks, products }) {
       </div>
 
       {showDailyReport && <DailyProductReportModal orders={orders} products={products} onClose={()=>setShowDailyReport(false)} />}
+
+      <div className="text-center text-xs text-gray-400 pt-2 pb-4">© DotcomOne. All Rights Reserved.</div>
     </div>
   );
 }
@@ -4179,7 +4182,8 @@ function LoginScreen({ onLogin, adminPassword, settings, setAdminPassword }) {
   if (showForgotPw) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background:'linear-gradient(135deg,#4f46e5 0%,#7c3aed 50%,#a855f7 100%)' }}>
-        <div className="bg-white rounded-3xl shadow-2xl p-10 w-full max-w-md mx-4">
+        <div className="flex flex-col items-center w-full max-w-md mx-4">
+        <div className="bg-white rounded-3xl shadow-2xl p-10 w-full">
           <div className="text-center mb-8">
             <div className="text-5xl mb-4">🔐</div>
             <h1 className="text-2xl font-bold text-gray-800">Verification Required</h1>
@@ -4211,13 +4215,16 @@ function LoginScreen({ onLogin, adminPassword, settings, setAdminPassword }) {
             </button>
           </form>
         </div>
+        <p className="text-center text-white text-xs mt-6 opacity-70">© DotcomOne. All Rights Reserved.</p>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center" style={{ background:'linear-gradient(135deg,#4f46e5 0%,#7c3aed 50%,#a855f7 100%)' }}>
-      <div className="bg-white rounded-3xl shadow-2xl p-10 w-full max-w-md mx-4">
+      <div className="flex flex-col items-center w-full max-w-md mx-4">
+      <div className="bg-white rounded-3xl shadow-2xl p-10 w-full">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-gray-800">Glow By Maheshi</h1>
           <p className="text-gray-500 text-sm mt-1">Beauty & Cosmetics POS System</p>
@@ -4261,6 +4268,9 @@ function LoginScreen({ onLogin, adminPassword, settings, setAdminPassword }) {
             </button>
           </div>
         </form>
+      </div>
+
+      <p className="text-center text-white text-xs mt-6 opacity-70">© DotcomOne. All Rights Reserved.</p>
       </div>
 
       {/* Password Reset Modal */}
@@ -4638,6 +4648,12 @@ async function generateShippingLabelsExactTemplate(orders, settings, products) {
   }
 
   container.innerHTML = '';
+  // Temporarily make container visible off-screen so auto-shrink can measure correctly
+  container.style.display = 'block';
+  container.style.position = 'fixed';
+  container.style.top = '-9999px';
+  container.style.left = '-9999px';
+  container.style.visibility = 'hidden';
   const barcodeIds = [];
 
   console.log('[Shipping Labels] Generating labels for', ordersWithTracking.length, 'orders...');
@@ -4682,7 +4698,7 @@ async function generateShippingLabelsExactTemplate(orders, settings, products) {
           </div>
           <div class="sl-remarks-section">
             <div class="sl-remarks-title">Remarks:</div>
-            <div class="sl-remarks-text">Whatsapp 0772524226 / 0770040283 / 0770039261 / 0776286380</div>
+            <div class="sl-remarks-text">0772524226 / 0770040283 / 0770039261 / 0776286380</div>
           </div>
         </div>
         <div class="sl-footer-section">
@@ -4782,6 +4798,11 @@ async function generateShippingLabelsExactTemplate(orders, settings, products) {
       });
 
       console.log('[Shipping Labels] Auto-shrink complete, opening print dialog...');
+      // Restore container visibility before print
+      container.style.removeProperty('position');
+      container.style.removeProperty('top');
+      container.style.removeProperty('left');
+      container.style.removeProperty('visibility');
       setTimeout(() => {
         window.print();
       }, 500);
